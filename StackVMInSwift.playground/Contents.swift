@@ -9,9 +9,9 @@ _This text is incorporated into the wikibook as_ [Register VM in Swift](https://
 
 _This text and the text from which it was translated are licensed under the_ [Creative Commons Attribution-ShareAlike License](http://creativecommons.org/licenses/by-sa/3.0/).
 
-_This text will render well in Xcode 7 if you select_ Show Rendered Markup _in the Editor menu._
+_This text will render well in Xcode 13 if you select_ Show Rendered Markup _in the Editor menu._
 
-_This playground has been updated to work with Swift 2.1._
+_This playground works with Swift 5._
 
 ## Design
 
@@ -163,8 +163,8 @@ The first and simplest part to implement is the set of 4 registers.
 
 */
 
-let NUM_REGS = 4
-var regs = [Int](count: NUM_REGS, repeatedValue: 0)
+let STACK_SIZE = 4
+var regs = [Int](repeating: 0, count: STACK_SIZE)
 
 /*:
 
@@ -193,7 +193,9 @@ var pc = 0  // program counter
 
 
 func fetch() -> Int {
-    return prog[pc++]
+    let inst = prog[pc]
+    pc += 1
+    return inst
 }
 
 /*:
@@ -278,13 +280,13 @@ program are working correctly.
 func formatRegister(reg:Int) -> String {
     let hex = String(reg, radix: 16, uppercase: true)
     let paddingCharacter = "0" as Character
-    let padding = String(count: 4 - hex.characters.count, repeatedValue: paddingCharacter)
+    let padding = String(repeating: paddingCharacter, count: 4 - hex.count)
     return padding + hex
 }
 
 func showRegs() -> Void {
     print("regs = ", terminator:"")
-    print(regs.map(formatRegister).joinWithSeparator(" "))
+    print(regs.map(formatRegister).joined(separator: " "))
 }
 
 /*:
@@ -300,7 +302,7 @@ func run() -> Void {
     showRegs()
     while running != 0 {
         let instr = fetch()
-        decode(instr)
+        decode(instr: instr)
         eval()
         showRegs()
     }
